@@ -1,0 +1,37 @@
+server:
+  port: 8763
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: demo
+          uri: http://localhost:8080
+          predicates:
+            - Path=/demo/**
+          filters:
+            - StripPrefix=1
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 2
+                key-resolver: "#{@apiKeyResolver}"
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10
+            redis-rate-limiter.burstCapacity: 20
+            key-resolver: "#{@ipKeyResolver}"
+
+  redis:
+    database: 3
+    host: ${REDIS_HOST: null}
+    port: ${REDIS_PORT:6379}
+    password: null
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 20
+        max-wait: -1
+        max-idle: 20
+        min-idle: 0
