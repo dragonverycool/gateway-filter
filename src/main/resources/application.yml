@@ -6,7 +6,7 @@ spring:
     gateway:
       routes:
         - id: demo
-          uri: http://localhost:8080
+          uri: http://localhost:8763
           predicates:
             - Path=/demo/**
           filters:
